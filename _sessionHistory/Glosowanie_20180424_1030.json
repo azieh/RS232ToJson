@@ -1,0 +1,75 @@
+[{
+    "Id": 1,
+    "PilotName": "Pilot_1",
+    "Vote": "X"
+},
+{
+    "Id": 2,
+    "PilotName": "Pilot_2",
+    "Vote": "X"
+},
+{
+    "Id": 3,
+    "PilotName": "Pilot_3",
+    "Vote": "X"
+},
+{
+    "Id": 4,
+    "PilotName": "Pilot_4",
+    "Vote": "X"
+},
+{
+    "Id": 5,
+    "PilotName": "Pilot_5",
+    "Vote": "X"
+},
+{
+    "Id": 6,
+    "PilotName": "Pilot_6",
+    "Vote": "T"
+},
+{
+    "Id": 7,
+    "PilotName": "Pilot_7",
+    "Vote": "X"
+},
+{
+    "Id": 8,
+    "PilotName": "Pilot_8",
+    "Vote": "X"
+},
+{
+    "Id": 9,
+    "PilotName": "Pilot_9",
+    "Vote": "X"
+},
+{
+    "Id": 10,
+    "PilotName": "Pilot_10",
+    "Vote": "X"
+},
+{
+    "Id": 11,
+    "PilotName": "Pilot_11",
+    "Vote": "X"
+},
+{
+    "Id": 12,
+    "PilotName": "Pilot_12",
+    "Vote": "X"
+},
+{
+    "Id": 13,
+    "PilotName": "Pilot_13",
+    "Vote": "X"
+},
+{
+    "Id": 14,
+    "PilotName": "Pilot_14",
+    "Vote": "X"
+},
+{
+    "Id": 15,
+    "PilotName": "Pilot_15",
+    "Vote": "X"
+}]
