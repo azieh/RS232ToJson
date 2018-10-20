@@ -13,7 +13,8 @@ class CommonSettings(object):
         WriteToJson    = False
         SendViaHttp    = True
         ServerAddress  = 'localhost' # or 'localhost' '192.168.0.232'
-        ApiExtension   = '/api/topics/vote-pilots'
+        ApiVoteExtension   = '/api/topics/vote-pilots'
+        ApiBatteryExtension = '/api/topics/battery-pilots'
 
 class FileNameSettings(object):
 

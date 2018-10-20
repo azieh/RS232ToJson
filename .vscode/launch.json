@@ -5,8 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Experimental: Terminal (integrated)",
-            "type": "pythonExperimental",
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell Launch Current File",
+            "script": "${file}",
+            "args": [],
+            "cwd": "${file}"
+        },
+        {
+            "name": "Python: Terminal (integrated)",
+            "type": "python",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal"

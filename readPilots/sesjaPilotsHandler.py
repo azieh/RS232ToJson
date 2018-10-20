@@ -1,6 +1,7 @@
 #!/usr/bin/python3.6
 from readPilots.common.commands import Commands
 from readPilots.model.pilotModel import PilotModel
+from readPilots.model.pilotBatteryModel import PilotBatteryModel
 import serial 
 import json
 import time
@@ -10,6 +11,7 @@ class SesjaPilotsHandler(object):
     __readedData = None
     __serialStream = None
 
+    __separatorSize = 0
     isPilotsPrepared = False
 
     #COM Settings
@@ -43,8 +45,21 @@ class SesjaPilotsHandler(object):
             print("ClearPilots: OK")
 
     def ReadPilots(self, pilotsData):
+        dataList = self.__readPilots(Commands.LIST())
+        self.__separatorSize = 0
+        self.__parseDataListIntoPilotModel(dataList, pilotsData, PilotModel)
+
+    def ReadBatteryStatus(self, pilotsData):
+        dataList = self.__readPilots(Commands.BATTERYSTATUS())
+        self.__separatorSize = 3
+        self.__parseDataListIntoPilotModel(dataList, pilotsData, PilotBatteryModel)
+
+    def CloseStream(self):
+        self.__serialStream.close()
+        
+    def __readPilots(self, command):
         dataList = list()
-        self.__serialStream.write(Commands.LIST())
+        self.__serialStream.write(command)
         time.sleep(1)
         while self.__serialStream.inWaiting() > 0:
             data = self.__serialStream.readline()
@@ -54,11 +69,8 @@ class SesjaPilotsHandler(object):
             return list()
 
         self.__preparePilotsResponse(dataList)
-        self.__parseDataListIntoPilotModel(dataList, pilotsData)
+        return dataList
 
-    def CloseStream(self):
-        self.__serialStream.close()
-        
     def __preparePilotsResponse(self, dataList):
         dataList.pop(0) # first data is useless
         count = len(dataList)
@@ -67,7 +79,7 @@ class SesjaPilotsHandler(object):
         dataList.pop(count - 2)
         dataList.pop(count - 3)
 
-    def __parseDataListIntoPilotModel(self, dataList, pilotsData):
+    def __parseDataListIntoPilotModel(self, dataList, pilotsData, DataModel):
         parsedList = list()
         for data in dataList:
             stringData = str(data)
@@ -76,15 +88,12 @@ class SesjaPilotsHandler(object):
                 continue
 
             name = data[0 : separatorData - 2].decode("utf-8")
-            value = data[separatorData - 1 : separatorData].decode("utf-8")
+            value = data[separatorData - 1 : separatorData + self.__separatorSize].decode("utf-8")
             parsedInt = int(name, 16)
-            pilot = PilotModel(str(parsedInt), "Pilot_" + str(parsedInt), str(value))
+            pilot = DataModel(str(parsedInt), "Pilot_" + str(parsedInt), str(value))
 
             parsedList.append(pilot)
 
         sortedData = sorted(parsedList, key=lambda pilotModel: pilotModel.Id)
         for data in sortedData:
             pilotsData.append(data)
-        
-
-

@@ -9,6 +9,10 @@ class Commands(object):
     @staticmethod
     def LIST():
         return 'LST\r\n'.encode()
+
+    @staticmethod
+    def BATTERYSTATUS():
+        return 'BAT\r\n'.encode()
     
     @staticmethod
     def ISACK(response):

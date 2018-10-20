@@ -14,7 +14,7 @@ fileProperties  = FileNameSettings()
 saveFileName    = fileProperties.GetFileName()
 saveDirectory   = fileProperties.GetDirectoryName()
 serverAddress = CommonSettings.ServerAddress
-apiExtension  = CommonSettings.ApiExtension
+apiExtension  = CommonSettings.ApiVoteExtension
 
 if(CommonSettings.WriteToJson):
     print('{0} {1}/{2}'.format("Data will be stored at:", saveDirectory, saveFileName))
