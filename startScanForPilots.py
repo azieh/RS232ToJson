@@ -8,19 +8,23 @@ from helper import CommonSettings
 import os
 import time
 
-print("Start reading battery status from pilots")
+print("Start reading new pilots")
 serverAddress = CommonSettings.ServerAddress
-apiExtension  = CommonSettings.ApiBatteryExtension
+apiExtension  = CommonSettings.ApiNewPilotsExtension
 
 pilotLogic = SesjaPilotsHandler()
+pilotLogic.ClearPilots()
+pilotLogic.ScanForPilotsInit()
+while True:
+    pilotsData = list()
+    pilotLogic.ScanForPilotsLeasning(pilotsData)
+    if not pilotsData:
+        continue
 
-pilotsData = list()
-pilotLogic.ReadBatteryStatus(pilotsData)
-json = JsonHandler().ParseToJson(pilotsData)
-print(json)
-HttpHandler().SendData(
+    json = JsonHandler().ParseToJson(pilotsData)
+    print(json)
+    HttpHandler().SendData(
             serverAddress = serverAddress,
             apiExtension = apiExtension,
             json = json)
-
-print("Done")
+    time.sleep(1)

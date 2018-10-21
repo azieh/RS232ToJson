@@ -15,6 +15,7 @@ class CommonSettings(object):
         ServerAddress  = 'localhost' # or 'localhost' '192.168.0.232'
         ApiVoteExtension   = '/api/topics/vote-pilots'
         ApiBatteryExtension = '/api/topics/battery-pilots'
+        ApiNewPilotsExtension = '/api/topics/new-pilots'
 
 class FileNameSettings(object):
 

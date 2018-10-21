@@ -53,6 +53,20 @@ class SesjaPilotsHandler(object):
         dataList = self.__readPilots(Commands.BATTERYSTATUS())
         self.__separatorSize = 3
         self.__parseDataListIntoPilotModel(dataList, pilotsData, PilotBatteryModel)
+    
+    def ScanForPilotsInit(self):
+        self.__readPilots(Commands.SCANFORPILOTS())
+        print("Scan mode is ON")
+    
+    def ScanForPilotsLeasning(self, pilotsData):
+        dataList = self.__readPilotsResponse()
+        self.__parseDataListIntoPilotModel(dataList, pilotsData, PilotModel)
+
+    def ClearPilotsList(self):
+        self.__readPilots(Commands.CLEAR())
+    
+    def EndVoteSession(self):
+        self.__readPilots(Commands.ENDVOTE())
 
     def CloseStream(self):
         self.__serialStream.close()
@@ -68,15 +82,36 @@ class SesjaPilotsHandler(object):
         if Commands.ISACK(dataList) == False:
             return list()
 
+        if not dataList:
+            return list()
+            
         self.__preparePilotsResponse(dataList)
+        return dataList
+    
+    def __readPilotsResponse(self):
+        dataList = list()
+        time.sleep(1)
+        while self.__serialStream.inWaiting() > 0:
+            data = self.__serialStream.readline()
+            dataList.append(data)
+
+        if not dataList:
+            return list()
+
         return dataList
 
     def __preparePilotsResponse(self, dataList):
         dataList.pop(0) # first data is useless
         count = len(dataList)
         #last 3 data are useless
+        if(count - 1 < 0):
+            return
         dataList.pop(count - 1)
+        if(count - 2 < 0):
+            return
         dataList.pop(count - 2)
+        if(count - 3 < 0):
+            return
         dataList.pop(count - 3)
 
     def __parseDataListIntoPilotModel(self, dataList, pilotsData, DataModel):
@@ -85,7 +120,9 @@ class SesjaPilotsHandler(object):
             stringData = str(data)
             separatorData = stringData.find(':')
             if separatorData < 0:
-                continue
+                separatorData = stringData.find('>')
+                if separatorData < 0:
+                    continue
 
             name = data[0 : separatorData - 2].decode("utf-8")
             value = data[separatorData - 1 : separatorData + self.__separatorSize].decode("utf-8")
