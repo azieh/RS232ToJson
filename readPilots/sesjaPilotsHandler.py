@@ -5,6 +5,8 @@ from readPilots.model.pilotBatteryModel import PilotBatteryModel
 import serial 
 import json
 import time
+import sys
+import glob
 
 class SesjaPilotsHandler(object):
 
@@ -12,18 +14,21 @@ class SesjaPilotsHandler(object):
     __serialStream = None
 
     __separatorSize = 0
+    __serialDealey = 0.2
     isPilotsPrepared = False
 
     #COM Settings
-    __portName = "/dev/ttyUSB0"
+    
     __baudRate = 115200
     __data = serial.EIGHTBITS
     __parity = serial.PARITY_NONE
     __stopBits = serial.STOPBITS_ONE
 
-    def __init__(self):
+    def InitConnection(self):
+        print("Init connection to USB")
+        portName = self.SerialPort()
         self.__serialStream = serial.Serial(
-            port = self.__portName,
+            port = portName,
             baudrate = self.__baudRate,
             parity = self.__parity,
             stopbits = self.__stopBits,
@@ -34,15 +39,19 @@ class SesjaPilotsHandler(object):
         self.__serialStream.isOpen()
 
     def ClearPilots(self):
+        print("Clear section")
         response = b''
+        
         self.__serialStream.write(Commands.CLEAR())
-        time.sleep(1)
+        time.sleep(self.__serialDealey)
         while self.__serialStream.inWaiting() > 0:
             response += self.__serialStream.readline()
             
         if Commands.ISACK(response):
             self.isPilotsPrepared = True
             print("ClearPilots: OK")
+        
+        self.__clearSerialBuffer()
 
     def ReadPilots(self, pilotsData):
         dataList = self.__readPilots(Commands.LIST())
@@ -62,19 +71,22 @@ class SesjaPilotsHandler(object):
         dataList = self.__readPilotsResponse()
         self.__parseDataListIntoPilotModel(dataList, pilotsData, PilotModel)
 
-    def ClearPilotsList(self):
-        self.__readPilots(Commands.CLEAR())
-    
     def EndVoteSession(self):
         self.__readPilots(Commands.ENDVOTE())
 
     def CloseStream(self):
         self.__serialStream.close()
         
+    def __clearSerialBuffer(self):
+        print("Clear input buffer")
+        self.__serialStream.reset_input_buffer()
+        print("Clear output buffer")
+        self.__serialStream.reset_output_buffer()
+
     def __readPilots(self, command):
         dataList = list()
         self.__serialStream.write(command)
-        time.sleep(1)
+        time.sleep(self.__serialDealey)
         while self.__serialStream.inWaiting() > 0:
             data = self.__serialStream.readline()
             dataList.append(data)
@@ -90,7 +102,7 @@ class SesjaPilotsHandler(object):
     
     def __readPilotsResponse(self):
         dataList = list()
-        time.sleep(1)
+        time.sleep(self.__serialDealey)
         while self.__serialStream.inWaiting() > 0:
             data = self.__serialStream.readline()
             dataList.append(data)
@@ -134,3 +146,11 @@ class SesjaPilotsHandler(object):
         sortedData = sorted(parsedList, key=lambda pilotModel: pilotModel.Id)
         for data in sortedData:
             pilotsData.append(data)
+
+    def SerialPort(self):
+        print("Looking for USB device")
+        ports = glob.glob('/dev/ttyUSB[0-9]')
+        print(ports)
+        print(ports[0])
+        return ports[0]
+

@@ -10,7 +10,7 @@ import time
 print("End vote session")
 
 pilotLogic = SesjaPilotsHandler()
-
+pilotLogic.InitConnection()
 pilotLogic.EndVoteSession()
 pilotLogic.CloseStream()
 

@@ -13,6 +13,7 @@ serverAddress = CommonSettings.ServerAddress
 apiExtension  = CommonSettings.ApiNewPilotsExtension
 
 pilotLogic = SesjaPilotsHandler()
+pilotLogic.InitConnection()
 pilotLogic.ClearPilots()
 pilotLogic.ScanForPilotsInit()
 while True:

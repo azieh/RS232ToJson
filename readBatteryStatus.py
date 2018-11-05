@@ -13,7 +13,7 @@ serverAddress = CommonSettings.ServerAddress
 apiExtension  = CommonSettings.ApiBatteryExtension
 
 pilotLogic = SesjaPilotsHandler()
-
+pilotLogic.InitConnection()
 pilotsData = list()
 pilotLogic.ReadBatteryStatus(pilotsData)
 json = JsonHandler().ParseToJson(pilotsData)
