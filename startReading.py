@@ -17,6 +17,7 @@ saveFileName    = fileProperties.GetFileName()
 saveDirectory   = fileProperties.GetDirectoryName()
 serverAddress = CommonSettings.ServerAddress
 apiExtension  = CommonSettings.ApiVoteExtension
+resetRadioTimeout = CommonSettings.ResetRadioTimeout
 
 if(CommonSettings.WriteToJson):
     print('{0} {1}/{2}'.format("Data will be stored at:", saveDirectory, saveFileName))
@@ -28,14 +29,14 @@ pilotLogic = SesjaPilotsHandler()
 try:
     pilotLogic.InitConnection()
 except:
-    RadioModuleHandler.RadioHardRestart()
+    RadioModuleHandler.RadioHardRestart(resetRadioTimeout)
     pilotLogic.InitConnection()
 
 while pilotLogic.isPilotsPrepared == False:
     pilotLogic.ClearPilots()
     __openCommunicationTry += __openCommunicationTry
     if __openCommunicationTry >= 10:
-        RadioModuleHandler.RadioHardRestart()
+        RadioModuleHandler.RadioHardRestart(resetRadioTimeout)
         pilotLogic.InitConnection()
         __openCommunicationTry = 0
 

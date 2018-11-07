@@ -16,6 +16,7 @@ class CommonSettings(object):
         ApiVoteExtension   = '/api/topics/vote-pilots'
         ApiBatteryExtension = '/api/topics/battery-pilots'
         ApiNewPilotsExtension = '/api/topics/new-pilots'
+        ResetRadioTimeout = 2
 
 class FileNameSettings(object):
 

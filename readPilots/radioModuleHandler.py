@@ -13,9 +13,9 @@ class RadioModuleHandler(object):
         gpio.setup(174,'out')
 
     @staticmethod
-    def RadioHardRestart():
+    def RadioHardRestart(timeout):
         RadioModuleHandler.__disconnectRadioModule()
-        time.sleep(10)
+        time.sleep(timeout)
         RadioModuleHandler.__connectRadioModule()
-        time.sleep(15)
+        time.sleep(timeout)
         print("Hard restart of radio module has been done")
