@@ -10,7 +10,6 @@ import os
 import time
 
 print("Start")
-__openCommunicationTry = 0
 
 fileProperties  = FileNameSettings()
 saveFileName    = fileProperties.GetFileName()
@@ -33,12 +32,13 @@ except:
     pilotLogic.InitConnection()
 
 while pilotLogic.isPilotsPrepared == False:
-    pilotLogic.ClearPilots()
-    __openCommunicationTry += __openCommunicationTry
-    if __openCommunicationTry >= 10:
+    pilotLogic.ClearPilotsJob()
+    if pilotLogic.isPilotsPrepared == False:
         RadioModuleHandler.RadioHardRestart(resetRadioTimeout)
+        pilotLogic.CloseStream()
+        pilotLogic = SesjaPilotsHandler()
         pilotLogic.InitConnection()
-        __openCommunicationTry = 0
+        
 
 while True:
     pilotsData = list()

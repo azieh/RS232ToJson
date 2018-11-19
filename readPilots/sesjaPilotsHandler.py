@@ -2,6 +2,7 @@
 from readPilots.common.commands import Commands
 from readPilots.model.pilotModel import PilotModel
 from readPilots.model.pilotBatteryModel import PilotBatteryModel
+from multiprocessing import Process, Value
 import serial 
 import json
 import time
@@ -38,20 +39,38 @@ class SesjaPilotsHandler(object):
             self.__serialStream.open()
         self.__serialStream.isOpen()
 
-    def ClearPilots(self):
-        print("Clear section")
+    def __sendClearCommandToInit(self, result):
+        print("Clear pilots section")
         response = b''
-        
+        print("Write clear")
         self.__serialStream.write(Commands.CLEAR())
         time.sleep(self.__serialDealey)
+        print("Try read response")
         while self.__serialStream.inWaiting() > 0:
+            print("Read response")
             response += self.__serialStream.readline()
             
         if Commands.ISACK(response):
+            result.value = True
             self.isPilotsPrepared = True
             print("ClearPilots: OK")
         
         self.__clearSerialBuffer()
+
+    def ClearPilotsJob(self):
+        TIMEOUT = 5
+        isReady = Value('b', False)
+        job = Process(target = self.__sendClearCommandToInit, args=(isReady,))
+        job.start()
+        start = time.time()
+        while time.time() - start <= TIMEOUT:
+            if job.is_alive() == False:
+                break
+        else:
+            print("Timeout connection to USB")
+            job.terminate()
+        
+        self.isPilotsPrepared = isReady.value
 
     def ReadPilots(self, pilotsData):
         dataList = self.__readPilots(Commands.LIST())
