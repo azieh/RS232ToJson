@@ -1,5 +1,6 @@
 #!/usr/bin/python3.6
 import datetime
+import time
 #pip is required
 #type
 #!: wget https://bootstrap.pypa.io/get-pip.py
@@ -32,3 +33,8 @@ class FileNameSettings(object):
     
     def GetDirectoryName(self):
         return self.__directoryName
+
+class Logger(object):
+    @classmethod
+    def Trace(self, methodName, time):
+            print(f"___{methodName}: {time}[ms]")

@@ -1,7 +1,7 @@
 import json
 
 class JsonHandler(object):
-
+    previousVoteJson = ""
     def WriteVoteData(self, directoryName, fileName, json):
         try:
             path = '{0}/{1}'.format(directoryName, fileName)
@@ -21,3 +21,14 @@ class JsonHandler(object):
         json = "[%s]" % ",\n".join(jsonArray)
 
         return json
+
+    def IsDifferenceWithPreviousVote(self, newJson):
+        a = json.loads(self.previousVoteJson)
+        b = json.loads(newJson)
+        
+        isDifference = sorted(a.items()) == sorted(b.items())
+
+        if isDifference:
+            previousVoteJson = newJson
+        
+        return isDifference

@@ -3,6 +3,7 @@ from readPilots.common.commands import Commands
 from readPilots.model.pilotModel import PilotModel
 from readPilots.model.pilotBatteryModel import PilotBatteryModel
 from multiprocessing import Process, Value
+from helper import Logger
 import serial 
 import json
 import time
@@ -26,6 +27,7 @@ class SesjaPilotsHandler(object):
     __stopBits = serial.STOPBITS_ONE
 
     def InitConnection(self):
+        startTime = time.time()
         print("Init connection to USB")
         portName = self.SerialPort()
         self.__serialStream = serial.Serial(
@@ -38,6 +40,8 @@ class SesjaPilotsHandler(object):
         if self.__serialStream.isOpen() == False:
             self.__serialStream.open()
         self.__serialStream.isOpen()
+        stopTime = time.time()
+        Logger.Trace("InitConnection", stopTime - startTime)
 
     def __sendClearCommandToInit(self, result):
         print("Clear pilots section")
@@ -47,7 +51,6 @@ class SesjaPilotsHandler(object):
         time.sleep(self.__serialDealey)
         print("Try read response")
         while self.__serialStream.inWaiting() > 0:
-            print("Read response")
             response += self.__serialStream.readline()
             
         if Commands.ISACK(response):
@@ -58,6 +61,7 @@ class SesjaPilotsHandler(object):
         self.__clearSerialBuffer()
 
     def ClearPilotsJob(self):
+        startTime = time.time()
         TIMEOUT = 5
         isReady = Value('b', False)
         job = Process(target = self.__sendClearCommandToInit, args=(isReady,))
@@ -69,14 +73,18 @@ class SesjaPilotsHandler(object):
         else:
             print("Timeout connection to USB")
             job.terminate()
-        
         self.isPilotsPrepared = isReady.value
+        stopTime = time.time()
+        Logger.Trace("ClearPilotsJob", stopTime - startTime)
 
     def ReadPilots(self, pilotsData):
+        startTime = time.time()
         dataList = self.__readPilots(Commands.LIST())
         self.__separatorSize = 0
         self.__parseDataListIntoPilotModel(dataList, pilotsData, PilotModel)
-
+        stopTime = time.time()
+        Logger.Trace("ReadPilots", stopTime - startTime)
+        
     def ReadBatteryStatus(self, pilotsData):
         dataList = self.__readPilots(Commands.BATTERYSTATUS())
         self.__separatorSize = 3
@@ -97,9 +105,8 @@ class SesjaPilotsHandler(object):
         self.__serialStream.close()
         
     def __clearSerialBuffer(self):
-        print("Clear input buffer")
+        print("Clear buffers")
         self.__serialStream.reset_input_buffer()
-        print("Clear output buffer")
         self.__serialStream.reset_output_buffer()
 
     def __readPilots(self, command):

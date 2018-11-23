@@ -10,7 +10,6 @@ import os
 import time
 
 print("Start")
-
 fileProperties  = FileNameSettings()
 saveFileName    = fileProperties.GetFileName()
 saveDirectory   = fileProperties.GetDirectoryName()
@@ -34,8 +33,7 @@ except:
 while pilotLogic.isPilotsPrepared == False:
     pilotLogic.ClearPilotsJob()
     if pilotLogic.isPilotsPrepared == False:
-        RadioModuleHandler.RadioHardRestart(resetRadioTimeout)
-        pilotLogic.CloseStream()
+        import endVoteSesion
         pilotLogic = SesjaPilotsHandler()
         pilotLogic.InitConnection()
         
@@ -49,14 +47,15 @@ while True:
 
     json = JsonHandler().ParseToJson(pilotsData)
     
-    if CommonSettings.WriteToJson:
-        JsonHandler().WriteVoteData(
-            directoryName =  saveDirectory, 
-            fileName = saveFileName, 
-            json = json)
+    if JsonHandler().IsDifferenceWithPreviousVote(json):
+        if CommonSettings.WriteToJson:
+            JsonHandler().WriteVoteData(
+                directoryName =  saveDirectory, 
+                fileName = saveFileName, 
+                json = json)
 
-    if CommonSettings.SendViaHttp:
-        HttpHandler().SendData(
-            serverAddress = serverAddress,
-            apiExtension = apiExtension,
-            json = json)
+        if CommonSettings.SendViaHttp:
+            HttpHandler().SendData(
+                serverAddress = serverAddress,
+                apiExtension = apiExtension,
+                json = json)
