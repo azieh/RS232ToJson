@@ -37,4 +37,4 @@ class FileNameSettings(object):
 class Logger(object):
     @classmethod
     def Trace(self, methodName, time):
-            print(f"___{methodName}: {time}[ms]")
+            print(f"___{methodName}: {time}[s]")

@@ -14,7 +14,7 @@ apiExtension  = CommonSettings.ApiNewPilotsExtension
 
 pilotLogic = SesjaPilotsHandler()
 pilotLogic.InitConnection()
-pilotLogic.ClearPilots()
+pilotLogic.ClearPilotsJob()
 pilotLogic.ScanForPilotsInit()
 while True:
     pilotsData = list()

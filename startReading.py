@@ -16,6 +16,7 @@ saveDirectory   = fileProperties.GetDirectoryName()
 serverAddress = CommonSettings.ServerAddress
 apiExtension  = CommonSettings.ApiVoteExtension
 resetRadioTimeout = CommonSettings.ResetRadioTimeout
+previousJson = ""
 
 if(CommonSettings.WriteToJson):
     print('{0} {1}/{2}'.format("Data will be stored at:", saveDirectory, saveFileName))
@@ -47,7 +48,8 @@ while True:
 
     json = JsonHandler().ParseToJson(pilotsData)
     
-    if JsonHandler().IsDifferenceWithPreviousVote(json):
+    if not JsonHandler().IsDifferenceWithPreviousVote(previousJson, json):
+        previousJson = json
         if CommonSettings.WriteToJson:
             JsonHandler().WriteVoteData(
                 directoryName =  saveDirectory, 

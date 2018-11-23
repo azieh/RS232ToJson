@@ -1,7 +1,6 @@
 import json
 
 class JsonHandler(object):
-    previousVoteJson = ""
     def WriteVoteData(self, directoryName, fileName, json):
         try:
             path = '{0}/{1}'.format(directoryName, fileName)
@@ -22,13 +21,38 @@ class JsonHandler(object):
 
         return json
 
-    def IsDifferenceWithPreviousVote(self, newJson):
-        a = json.loads(self.previousVoteJson)
-        b = json.loads(newJson)
+    def IsDifferenceWithPreviousVote(self, previousJson, newJson):
+        if previousJson == "":
+            return False
         
-        isDifference = sorted(a.items()) == sorted(b.items())
+        a, b = json.loads(previousJson), json.loads(newJson)
+        isTheSame = self.__compare(a, b)
+        if not isTheSame:
+            print(previousJson)
+            print(newJson)
+        return isTheSame
 
-        if isDifference:
-            previousVoteJson = newJson
+    def __compare(self, data_a, data_b):
+        if (type(data_a) is list):
+            if ((type(data_b) != list) or (len(data_a) != len(data_b))):
+                return False
+
+            for list_index,list_item in enumerate(data_a):
+                if (not self.__compare(list_item,data_b[list_index])):
+                    return False
+            return True
+
+        if (type(data_a) is dict):
+            if (type(data_b) != dict):
+                return False
+
+            for dict_key,dict_value in data_a.items():
+                if ((dict_key not in data_b) or (not self.__compare(dict_value,data_b[dict_key]))):
+                    return False
+
+            return True
         
-        return isDifference
+        return (
+			(data_a == data_b) and
+			(type(data_a) is type(data_b))
+		)
