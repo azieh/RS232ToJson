@@ -34,6 +34,7 @@ except:
 while pilotLogic.isPilotsPrepared == False:
     pilotLogic.ClearPilotsJob()
     if pilotLogic.isPilotsPrepared == False:
+        RadioModuleHandler.RadioHardRestart(resetRadioTimeout)
         import endVoteSesion
         pilotLogic = SesjaPilotsHandler()
         pilotLogic.InitConnection()
