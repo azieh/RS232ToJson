@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!/usr/bin/python3.10
 
 from readPilots.sesjaPilotsHandler import SesjaPilotsHandler
 from readPilots.radioModuleHandler import RadioModuleHandler
@@ -6,17 +6,14 @@ from saveData.jsonHandler import JsonHandler
 from sendViaHttp.httpHandler import HttpHandler
 from helper import FileNameSettings, CommonSettings
 
-import os
-import time
-
 print("Start")
 fileProperties  = FileNameSettings()
-saveFileName    = fileProperties.GetFileName()
-saveDirectory   = fileProperties.GetDirectoryName()
-serverAddress = CommonSettings.ServerAddress
-apiExtension  = CommonSettings.ApiVoteExtension
-resetRadioTimeout = CommonSettings.ResetRadioTimeout
-previousJson = ""
+saveFileName:str    = fileProperties.GetFileName()
+saveDirectory:str   = fileProperties.GetDirectoryName()
+serverAddress:str = CommonSettings.ServerAddress
+apiExtension:str  = CommonSettings.ApiVoteExtension
+resetRadioTimeout:int = CommonSettings.ResetRadioTimeout
+previousJson:str = ""
 
 if(CommonSettings.WriteToJson):
     print('{0} {1}/{2}'.format("Data will be stored at:", saveDirectory, saveFileName))
@@ -35,11 +32,9 @@ while pilotLogic.isPilotsPrepared == False:
     pilotLogic.ClearPilotsJob()
     if pilotLogic.isPilotsPrepared == False:
         RadioModuleHandler.RadioHardRestart(resetRadioTimeout)
-        import endVoteSesion
         pilotLogic = SesjaPilotsHandler()
         pilotLogic.InitConnection()
-        
-
+ 
 while True:
     pilotsData = list()
     pilotLogic.ReadPilots(pilotsData)
@@ -53,8 +48,8 @@ while True:
         previousJson = json
         if CommonSettings.WriteToJson:
             JsonHandler().WriteVoteData(
-                directoryName =  saveDirectory, 
-                fileName = saveFileName, 
+                directoryName =  saveDirectory,
+                fileName = saveFileName,
                 json = json)
 
         if CommonSettings.SendViaHttp:

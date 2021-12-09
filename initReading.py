@@ -1,6 +1,5 @@
-#!/usr/bin/python3.6
+#!/usr/bin/python3.10
 
-import time
 bashCommand = "pkill -f startReading.py"
 import subprocess
 process = subprocess.Popen(bashCommand.split(), stdout=subprocess.PIPE)

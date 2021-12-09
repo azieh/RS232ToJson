@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!/usr/bin/python3.10
 
 import time
 bashCommand = "pkill -f startReading.py"

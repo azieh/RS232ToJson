@@ -1,4 +1,4 @@
-#!/usr/bin/python3.6
+#!/usr/bin/python3.10
 
 from readPilots.sesjaPilotsHandler import SesjaPilotsHandler
 from saveData.jsonHandler import JsonHandler

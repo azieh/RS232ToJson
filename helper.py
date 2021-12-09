@@ -1,6 +1,5 @@
-#!/usr/bin/python3.6
+#!/usr/bin/python3.10
 import datetime
-import time
 #pip is required
 #type
 #!: wget https://bootstrap.pypa.io/get-pip.py

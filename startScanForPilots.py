@@ -1,11 +1,10 @@
-#!/usr/bin/python3.6
+#!/usr/bin/python3.10
 
 from readPilots.sesjaPilotsHandler import SesjaPilotsHandler
 from saveData.jsonHandler import JsonHandler
 from sendViaHttp.httpHandler import HttpHandler
 from helper import CommonSettings
 
-import os
 import time
 
 print("Start reading new pilots")

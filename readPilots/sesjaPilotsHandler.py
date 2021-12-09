@@ -1,18 +1,15 @@
-#!/usr/bin/python3.6
+#!/usr/bin/python3.10
 from readPilots.common.commands import Commands
 from readPilots.model.pilotModel import PilotModel
 from readPilots.model.pilotBatteryModel import PilotBatteryModel
 from multiprocessing import Process, Value
 from helper import Logger
-import serial 
-import json
+import serial
 import time
-import sys
 import glob
 
 class SesjaPilotsHandler(object):
 
-    __readedData = None
     __serialStream = None
 
     __separatorSize = 0
@@ -122,10 +119,10 @@ class SesjaPilotsHandler(object):
 
         if not dataList:
             return list()
-            
+
         self.__preparePilotsResponse(dataList)
         return dataList
-    
+
     def __readPilotsResponse(self):
         dataList = list()
         time.sleep(self.__serialDealey)
@@ -179,4 +176,3 @@ class SesjaPilotsHandler(object):
         print(ports)
         print(ports[0])
         return ports[0]
-
