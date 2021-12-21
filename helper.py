@@ -3,10 +3,15 @@ import datetime
 #pip is required
 #type
 #!: wget https://bootstrap.pypa.io/get-pip.py
-#!: sudo python3.6 get-pip.py
+#!: sudo python get-pip.py
 #program require serial library to install
 #type 
-#~: python3.6 -m pip install pyserial
+#~: python -m pip install pyserial
+#~: python -m pip install asyncio
+#~: python -m pip install python-socketio
+#~: python -m pip install PyJWT
+#~: python -m pip install cryptography
+#~: python -m pip install aiohttp
 
 class CommonSettings(object):
     
@@ -16,6 +21,9 @@ class CommonSettings(object):
         ApiVoteExtension   = '/api/topics/vote-pilots'
         ApiBatteryExtension = '/api/topics/battery-pilots'
         ApiNewPilotsExtension = '/api/topics/new-pilots'
+        SocketIoServerAddress = 'https://staging.sesja.pl/socket.io/'
+        SocketIoAuthQueryString = '?auth='
+        SocketIoAuthLocation = 'Urzad_Nowy_Sacz_Czy_Cos'
         ResetRadioTimeout = 1
 
 class FileNameSettings(object):

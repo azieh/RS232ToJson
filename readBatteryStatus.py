@@ -5,9 +5,6 @@ from saveData.jsonHandler import JsonHandler
 from sendViaHttp.httpHandler import HttpHandler
 from helper import CommonSettings
 
-import os
-import time
-
 print("Start reading battery status from pilots")
 serverAddress = CommonSettings.ServerAddress
 apiExtension  = CommonSettings.ApiBatteryExtension

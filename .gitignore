@@ -1,0 +1,2 @@
+*.pyc
+authorization/__pycache__/jwtHandler.cpython-310.pyc
