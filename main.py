@@ -21,8 +21,8 @@ sio = socketio.AsyncClient(
     randomization_factor=0.5,)
 
 pilotLogic: SesjaPilotsHandler
-checkRemotesTask: Task
-voteLoopTask: Task
+checkRemotesTask: Task = None
+voteLoopTask: Task = None
 
 async def ScanForPilots():
     print("Start reading new pilots")
@@ -33,6 +33,7 @@ async def ScanForPilots():
     pilotLogic.ScanForPilotsInit()
     while True:
         pilotsData = list()
+        await sio.sleep(0.1)
         pilotLogic.ScanForPilotsLeasning(pilotsData)
         if not pilotsData:
             continue
@@ -40,16 +41,16 @@ async def ScanForPilots():
         json = JsonHandler().ParseToJson(pilotsData)
         print(json)
         await sio.emit('remotes_response', json)
-        await asyncio.sleep(1)
 
 async def EndScanForVotes():
     global pilotLogic
     pilotLogic.InitConnection()
     pilotLogic.EndVoteSession()
     pilotLogic.CloseStream()
+    print("End scan for votes")
 
 async def ScanForVotes():
-    print("Start")
+    print("Start scan for votes")
     
     fileProperties  = FileNameSettings()
     saveFileName:str    = fileProperties.GetFileName()
@@ -83,7 +84,7 @@ async def ScanForVotes():
             continue
 
         json = JsonHandler().ParseToJson(pilotsData)
-
+        
         if not JsonHandler().IsDifferenceWithPreviousVote(previousJson, json):
             previousJson = json
             if CommonSettings.WriteToJson:
@@ -93,6 +94,7 @@ async def ScanForVotes():
                     json = json)
 
             await sio.emit('remotes_response', json)
+        await sio.sleep(0.1)
 
 @sio.on('connect')
 async def connect():
@@ -103,18 +105,22 @@ async def on_remotes_control(data):
     global checkRemotesTask
     global voteLoopTask
     if data == 'start_check_remotes':
-        checkRemotesTask = asyncio.create_task(ScanForPilots())
-        return 'OK'
-    if data == 'stop_check_remotes':
-        checkRemotesTask.cancel()
-        return 'OK'
+        checkRemotesTask = sio.start_background_task(ScanForPilots)
+        return "Ok"
     if data == 'start':
-        voteLoopTask = asyncio.create_task(ScanForVotes())
-        return 'OK'
-    if data == 'stop':
-        voteLoopTask.cancel()
-        asyncio.create_task(EndScanForVotes())
-        return 'OK'
+        voteLoopTask = sio.start_background_task(ScanForVotes)
+        return "Ok"
+    if data == 'stop' or data == 'stop_check_remotes':
+        if checkRemotesTask is not None:
+            checkRemotesTask.cancel()
+        if voteLoopTask is not None:
+            voteLoopTask.cancel()
+        voteLoopTask = None
+        checkRemotesTask = None
+        sio.start_background_task(EndScanForVotes)
+    
+    print('Waiting for commands')
+    await sio.wait()
 
 @sio.on('*')
 async def all(sid, data):
